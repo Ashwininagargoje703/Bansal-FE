@@ -1,5 +1,5 @@
 ### `npm i`
 ### `npm start`
-### Deployment :
+### Deployment : bansal-fe.vercel.app
 
 
