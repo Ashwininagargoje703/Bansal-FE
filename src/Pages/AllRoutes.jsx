@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
 import LoginCheck from "../Components/LoginCheck";
-import Feedback from "../Components/Feedback";
+import Feedback from "../Components/feedback";
 
 export default function AllRoutes() {
   return (
