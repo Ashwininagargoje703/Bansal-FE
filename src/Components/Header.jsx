@@ -19,7 +19,7 @@ const Header = () => {
       <Toolbar style={{ justifyContent: "space-between" }}>
         <Typography
           variant="h6"
-          sx={{ color: "white", letterSpacing: 4 }}
+          sx={{ color: "white", letterSpacing: 5 }}
           onClick={handlehome}
         >
           Bansal Analytics

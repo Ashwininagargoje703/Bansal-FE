@@ -3,10 +3,12 @@ import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { backendUrl } from "../http";
 import {
+  Alert,
   Box,
   Button,
   Container,
   Rating,
+  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
@@ -20,15 +22,27 @@ const Feedback = () => {
   const [submitted, setSubmitted] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [reviewData, setReviewData] = useState([]);
-  const [editedReviewData, setEditedReviewData] = useState([]); // New state for edited review data
+  const [editedReviewData, setEditedReviewData] = useState([]);
   const emaill = localStorage.getItem("email");
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState("");
+
+  const handleSnackbarClose = () => {
+    setShowAlert(false);
+  };
 
   const fetchReviewData = () => {
-    fetch(`${backendUrl}/review/get-review/${emaill}`)
+    const token = localStorage.getItem("token");
+
+    fetch(`${backendUrl}/review/get-review/${emaill}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         setReviewData(data?.review ? [data.review] : []);
-        // console.log("fetch data", data?.review);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -55,10 +69,13 @@ const Feedback = () => {
         url = `${backendUrl}/review/edit-review`;
       }
 
+      const token = localStorage.getItem("token");
+
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(data),
       });
@@ -68,12 +85,24 @@ const Feedback = () => {
         fetchReviewData();
         setSubmitted(true);
         setEditMode(false);
-        setReviewData([responseData]); // Update reviewData with the new/updated feedback
+        setReviewData([responseData]);
+        setAlertSeverity("success");
+        if (editMode) {
+          console.log("review edited");
+          setAlertMessage("Review Edited!");
+        } else {
+          setAlertMessage("Review Added!");
+        }
       } else if (response.status === 409) {
+        setAlertSeverity("error");
+        setAlertMessage("Already reviewed!");
         throw new Error("Already reviewed");
       } else {
+        setAlertSeverity("error");
+        setAlertMessage("Failed!");
         throw new Error("Failed to submit feedback");
       }
+      setShowAlert(true);
     } catch (error) {
       console.error(error);
     }
@@ -86,7 +115,7 @@ const Feedback = () => {
   const handleEdit = () => {
     setEditMode(true);
     setSubmitted(false);
-    setName(reviewData[0]?.name || ""); // Use editedReviewData[0] to access the first item in the array
+    setName(reviewData[0]?.name || "");
     setEmail(reviewData[0]?.email || "");
     setRating(reviewData[0]?.ratings || 0);
     setComment(reviewData[0]?.message || "");
@@ -94,8 +123,8 @@ const Feedback = () => {
 
   return (
     <Container maxWidth="sm">
-      <Typography variant="h5" component="h1" align="center" gutterBottom>
-        Feedback
+      <Typography variant="h4" component="h1" align="center" gutterBottom>
+        Bansal Feedback
       </Typography>
 
       {(editMode || reviewData.length === 0) && (
@@ -178,6 +207,17 @@ const Feedback = () => {
             Edit Feedback
           </Button>
         </div>
+      )}
+      {showAlert && (
+        <Snackbar
+          open={showAlert}
+          autoHideDuration={5000}
+          onClose={handleSnackbarClose}
+        >
+          <Alert onClose={handleSnackbarClose} severity={alertSeverity}>
+            {alertMessage}
+          </Alert>
+        </Snackbar>
       )}
     </Container>
   );

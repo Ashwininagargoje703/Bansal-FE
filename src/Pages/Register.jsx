@@ -1,14 +1,12 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import { AuthContext } from "../context/AuthContext";
 import { backendUrl } from "../http";
 
 export default function Register() {
-  const [name, setName] = useState(""); // Add name state
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { handleLogin } = useContext(AuthContext);
   const navigate = useNavigate();
 
   document.title = "Register";
@@ -27,9 +25,9 @@ export default function Register() {
       .then((res) => res.json())
       .then((res) => {
         if (res.status === 201) {
-          handleLogin(res?.user);
+          // handleLogin(res?.user);
           // Save email in localStorage
-          localStorage.setItem("email", email);
+          // localStorage.setItem("email", email);
           navigate("/login");
         }
       })
