@@ -4,5 +4,9 @@ clone repo and
 ### `npm i`
 ### `npm start`
 ### Deployment : bansal-fe.vercel.app
+### Backend deploy link : https://basal-be-production.up.railway.app/
+backend run localy using 
+ ### `npm i`
+ ### `npm run dev`
 
 
